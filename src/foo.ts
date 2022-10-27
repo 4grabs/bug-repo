@@ -1,41 +1,15 @@
 /* eslint-disable class-methods-use-this */
-import { EntityType, GaperVariant } from "isaac-typescript-definitions";
-import {
-  CallbackCustom,
-  DefaultMap,
-  defaultMapGetHash,
-  ModCallbackCustom,
-  ModFeature,
-} from "isaacscript-common";
-
-enum FooState {
-  BAR,
-}
-
-interface FooData {
-  state: FooState;
-}
+import { ModCallback } from "isaac-typescript-definitions";
+import { Callback, ModFeature } from "isaacscript-common";
 
 export class Foo extends ModFeature {
-  v = {
-    room: {
-      fooData: new DefaultMap<PtrHash, FooData>(() => ({
-        state: FooState.BAR,
-      })),
-    },
-  };
-
-  @CallbackCustom(
-    ModCallbackCustom.POST_NPC_UPDATE_FILTER,
-    EntityType.GAPER,
-    GaperVariant.FLAMING_GAPER,
-  )
-  update(npc: EntityNPC): void {
-    const data = defaultMapGetHash(this.v.room.fooData, npc);
-    this.stateBar(npc, data);
+  @Callback(ModCallback.POST_NPC_UPDATE)
+  update(): void {
+    print("We're here.");
   }
 
-  stateBar(npc: EntityNPC, _data: FooData): void {
-    npc.Pathfinder.MoveRandomlyBoss(true);
+  @Callback(ModCallback.PRE_NPC_UPDATE)
+  preUpdate(): boolean {
+    return true;
   }
 }
